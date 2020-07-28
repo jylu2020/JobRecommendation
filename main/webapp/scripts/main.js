@@ -2,7 +2,6 @@
 * 利用立即执行函数来隔离 
 */
 (function() {
-
   /**
    * Variables
    */
@@ -16,6 +15,7 @@
    * 
    */
   function init() {
+    headerEffect();
     // register event listeners
     document.querySelector('#login-form-btn').addEventListener('click', onSessionInvalid);
     document.querySelector('#login-btn').addEventListener('click', login);
@@ -62,20 +62,21 @@
     var registerForm = document.querySelector('#register-form');
     var itemNav = document.querySelector('#item-nav');
     var itemList = document.querySelector('#item-list');
-    var avatar = document.querySelector('#avatar');
     var welcomeMsg = document.querySelector('#welcome-msg');
     var logoutBtn = document.querySelector('#logout-link');
+    var topHeader = document.querySelector('.top-header');
 
     welcomeMsg.innerHTML = 'Welcome, ' + user_fullname;
 
     showElement(itemNav);
     showElement(itemList);
-    showElement(avatar);
     showElement(welcomeMsg);
     showElement(logoutBtn, 'inline-block');
+    showElement(topHeader);
     hideElement(loginForm);
     hideElement(registerForm);
-
+    
+    itemList.setAttribute("style", "border-color: #624630;");
     initGeoLocation();
   }
 
@@ -84,16 +85,16 @@
     var registerForm = document.querySelector('#register-form');
     var itemNav = document.querySelector('#item-nav');
     var itemList = document.querySelector('#item-list');
-    var avatar = document.querySelector('#avatar');
     var welcomeMsg = document.querySelector('#welcome-msg');
     var logoutBtn = document.querySelector('#logout-link');
+    var topHeader = document.querySelector('.top-header');
 
     hideElement(itemNav);
     hideElement(itemList);
-    hideElement(avatar);
     hideElement(logoutBtn);
     hideElement(welcomeMsg);
     hideElement(registerForm);
+    hideElement(topHeader);
 
     clearLoginError();
     showElement(loginForm);
@@ -113,13 +114,11 @@
     var registerForm = document.querySelector('#register-form');
     var itemNav = document.querySelector('#item-nav');
     var itemList = document.querySelector('#item-list');
-    var avatar = document.querySelector('#avatar');
     var welcomeMsg = document.querySelector('#welcome-msg');
     var logoutBtn = document.querySelector('#logout-link');
 
     hideElement(itemNav);
     hideElement(itemList);
-    hideElement(avatar);
     hideElement(logoutBtn);
     hideElement(welcomeMsg);
     hideElement(loginForm);
@@ -549,7 +548,7 @@
       li.appendChild($create('img', { src: item.image_url }));
     } else {
       li.appendChild($create('img', {
-        src: 'https://via.placeholder.com/100'
+        src: 'http://www.higginbothams.com/images/job-icon.png'
       }));
     }
     // section
@@ -568,7 +567,7 @@
     var keyword = $create('p', {
       className: 'item-keyword'
     });
-    keyword.innerHTML = 'Keyword: ' + item.keywords.join(', ');
+    keyword.innerHTML = 'Keywords: ' + item.keywords.join(', ');
     section.appendChild(keyword);
 
     li.appendChild(section);
@@ -599,6 +598,58 @@
     li.appendChild(favLink);
     itemList.appendChild(li);
   }
+  
+  var TxtType = function(el, toRotate, period) {
+      this.toRotate = toRotate;
+      this.el = el;
+      this.loopNum = 0;
+      this.period = parseInt(period, 10) || 2000;
+      this.txt = '';
+      this.tick();
+      this.isDeleting = false;
+  };
+
+  TxtType.prototype.tick = function() {
+      var i = this.loopNum % this.toRotate.length;
+      var fullTxt = this.toRotate[i];
+
+      if (this.isDeleting) {
+      this.txt = fullTxt.substring(0, this.txt.length - 1);
+      } else {
+      this.txt = fullTxt.substring(0, this.txt.length + 1);
+      }
+
+      this.el.innerHTML = '<span class="wrap" style="color: #DEB992; text-decoration: none;">'+this.txt+'</span>';
+
+      var that = this;
+      var delta = 200 - Math.random() * 100;
+
+      if (this.isDeleting) { delta /= 2; }
+
+      if (!this.isDeleting && this.txt === fullTxt) {
+      delta = this.period;
+      this.isDeleting = true;
+      } else if (this.isDeleting && this.txt === '') {
+      this.isDeleting = false;
+      this.loopNum++;
+      delta = 500;
+      }
+
+      setTimeout(function() {
+      that.tick();
+      }, delta);
+  };
+
+  function headerEffect() {
+      var elements = document.getElementsByClassName('typewrite');
+      for (var i=0; i<elements.length; i++) {
+          var toRotate = elements[i].getAttribute('data-type');
+          var period = elements[i].getAttribute('data-period');
+          if (toRotate) {
+            new TxtType(elements[i], JSON.parse(toRotate), period);
+          }
+      }
+  };
 
   init();
 
