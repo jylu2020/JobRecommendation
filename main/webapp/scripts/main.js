@@ -505,10 +505,11 @@
    */
   function listItems(items) {
     var itemList = document.querySelector('#item-list');
+    var itemDesc = document.querySelector('#item-description');
     itemList.innerHTML = ''; // clear current results
 
     for (var i = 0; i < items.length; i++) {
-      addItem(itemList, items[i]);
+      addItem(itemList, items[i], itemDesc);
     }
   }
 
@@ -530,7 +531,7 @@
    </div>
    </li>
    */
-  function addItem(itemList, item) {
+  function addItem(itemList, item, itemDesc) {
     var item_id = item.item_id;
 
     // create the <li> tag and specify the id and class attributes
@@ -562,6 +563,14 @@
     });
     title.innerHTML = item.name;
     section.appendChild(title);
+    
+    // description
+    var description = $create('p', {
+      className: 'item-description',
+      id: 'description-' + item_id,
+    });
+    description.innerHTML = "Description";
+    section.appendChild(description);
 
     // keyword
     var keyword = $create('p', {
@@ -597,6 +606,49 @@
 
     li.appendChild(favLink);
     itemList.appendChild(li);
+    
+    // create the <div> tag for item description modal
+    var myModal = $create('div', {
+    	id: 'description-' + item_id,
+        className: 'modal' 
+    });
+    var md = $create('div', {
+      className: 'modal-content'
+    });
+    
+//    <!-- Modal content -->
+//    <div class="modal-content">
+//      <span class="close">&times;</span>
+//      <p>Some text in the Modal..</p>
+//    </div>
+    var content_span = $create('span', {
+        className: 'close'
+    });
+    content_span.innerHTML = '&times;';
+    var content_p = $create('p', {
+    	id: 'description-' + item_id + '-content'
+    });
+    content_p.innerHTML = item.description;
+    md.appendChild(content_span);
+    md.appendChild(content_p);
+    myModal.appendChild(md);
+    itemDesc.appendChild(myModal);
+    
+    description.onclick = function() {
+    	myModal.style.display = "block";
+	}
+
+	// When the user clicks on <span> (x), close the modal
+    content_span.onclick = function() {
+    	myModal.style.display = "none";
+	}
+
+	// When the user clicks anywhere outside of the modal, close it
+	window.onclick = function(event) {
+	  if (event.target == myModal) {
+		  myModal.style.display = "none";
+	  }
+	}
   }
   
   var TxtType = function(el, toRotate, period) {

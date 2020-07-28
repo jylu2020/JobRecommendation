@@ -9,6 +9,7 @@ public class Item {
     private String name;
     private String address;
     private Set<String> keywords;
+    private String description;
     private String imageUrl;
     private String url;
     
@@ -19,6 +20,7 @@ public class Item {
         this.imageUrl = builder.imageUrl;
         this.url = builder.url;
         this.keywords = builder.keywords;
+        this.description = builder.description;
     }
     
 	public String getItemId() {
@@ -39,6 +41,9 @@ public class Item {
 	public String getUrl() {
 		return url;
 	}
+	public String getDescription() {
+		return description;
+	}
 	
 	public JSONObject toJSONObject() {
         JSONObject obj = new JSONObject();
@@ -48,6 +53,7 @@ public class Item {
         obj.put("keywords", new JSONArray(keywords));
         obj.put("image_url", imageUrl);
         obj.put("url", url);
+        obj.put("description", description);
         return obj;
     }
 
@@ -57,6 +63,7 @@ public class Item {
         private String address;
         private String imageUrl;
         private String url;
+        private String description;
         private Set<String> keywords;
         
         public void setItemId(String itemId) {
@@ -81,6 +88,10 @@ public class Item {
 
         public void setKeywords(Set<String> keywords) {
             this.keywords = keywords;
+        }
+        
+        public void setDescription(String description) {
+        	this.description = description;
         }
         
         public Item build() {

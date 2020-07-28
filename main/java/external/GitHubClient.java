@@ -102,6 +102,15 @@ public class GitHubClient {
             builder.setImageUrl(getStringFieldOrEmpty(object, "company_logo"));
             builder.setKeywords(new HashSet<String>(keywords.get(i)));
             
+            String description_raw = getStringFieldOrEmpty(array.getJSONObject(i), "description");
+            
+            if (description_raw.equals("") || description_raw.equals("\n")) {
+            	builder.setDescription(getStringFieldOrEmpty(object, "title"));
+            } else {
+            	if (description_raw.length() > 1000) description_raw = description_raw.substring(0,1000);
+            	builder.setDescription(description_raw+" ... ");
+            }
+            
             Item item = builder.build();
             itemList.add(item);
         }
